@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "dependencies": {
+    "puppeteer": "^20.8.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}
