@@ -1,0 +1,15 @@
+{
+  "name": "pptr-demo",
+  "version": "1.0.0",
+  "description": "puppeteer demo by beyond",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jraf@cin.ufpe.br",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "puppeteer": "^20.8.3"
+  }
+}
