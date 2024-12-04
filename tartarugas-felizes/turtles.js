@@ -1,82 +1,83 @@
-// puppeteer-extra is a drop-in replacement for puppeteer,
-// it augments the installed puppeteer with plugin functionality
-import puppeteer from 'puppeteer-extra'
-import fs from 'fs/promises'
+import puppeteer from 'puppeteer'
 
-// add stealth plugin and use defaults (all evasion techniques)
-import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-puppeteer.use(StealthPlugin())
 
 export async function main() {
   const browser = await puppeteer.launch({ headless: false, slowMo: 50 })
   const page = await browser.newPage()
 
-  const fileName = 'turtles-data.json'
-  await ensureFileRemoved(fileName)
-
   await page.goto('https://www.scrapethissite.com/pages/frames/')
-  page.setDefaultTimeout(180_000)
 
   const iframe = await getIframe(page, 'iframe')
   const turtleUrls = await collectTurtleUrls(iframe)
 
   const turtlesData = await scrapeTurtleData(browser, turtleUrls)
-  const turtlesFormattedData = JSON.stringify(turtlesData, null, 2)
+  const turtlesFormattedData = JSON.stringify(turtlesData, null, 2) // formatar o JSON de maneira legível
 
   await browser.close()
 
   return turtlesFormattedData
 }
 
-async function ensureFileRemoved(fileName) {
-  try {
-    await fs.access(fileName)
-    await fs.unlink(fileName)
-    console.log(`O arquivo "${fileName}" foi removido com sucesso!`)
-  } catch {
-    console.log(`O arquivo "${fileName}" não existe, pulando remoção.`)
-  }
-}
 
+/**
+ * Obtém o iframe correspondente a um seletor específico na página.
+ *
+ * @param {object} page - A instância da página do Puppeteer.
+ * @param {string} selector - O seletor do elemento iframe.
+ * @returns {Promise<object>} Uma promessa que resolve para o conteúdo do iframe.
+ */
 async function getIframe(page, selector) {
   const iframeElement = await page.waitForSelector(selector)
-  return iframeElement.contentFrame()
+  return iframeElement.contentFrame() // transforma o elemento em um iframe
 }
 
+/**
+ * Coleta URLs de tartarugas a partir de um iframe.
+ *
+ * @param {object} iframe - O iframe contendo os elementos das tartarugas.
+ * @returns {Promise<string[]>} Uma promessa que resolve para uma lista de URLs das tartarugas.
+ */
 async function collectTurtleUrls(iframe) {
-  const elements = await iframe.$$('.turtle-family-card')
+  const elements = await iframe.$$('.turtle-family-card') // extrai todos os elementos com a classe .turtle-family-card
   const urls = []
 
   for (const element of elements) {
-    const learnMoreBtn = await element.$('.btn')
-    const href = await learnMoreBtn.evaluate((el) => el.getAttribute('href'))
+    const learnMoreBtn = await element.$('.btn') // extrai o botão "Learn More"
+    const href = await learnMoreBtn.evaluate((el) => el.getAttribute('href')) // extrai o link do botão
     urls.push(`https://www.scrapethissite.com${href}`)
   }
 
   return urls
 }
 
+/**
+ * Raspa dados de tartarugas de uma lista de URLs.
+ *
+ * @param {object} browser - Instância do navegador Puppeteer.
+ * @param {string[]} urls - Lista de URLs para raspar dados.
+ * @returns {Promise<object[]>} - Uma promessa que resolve para uma lista de objetos contendo dados das tartarugas.
+ */
 async function scrapeTurtleData(browser, urls) {
   const data = []
 
   for (const url of urls) {
     const page = await browser.newPage()
-    await page.goto(url, { waitUntil: 'domcontentloaded' })
+    await page.goto(url, { waitUntil: 'domcontentloaded' }) // navega para a URL e espera até que o DOM seja carregado
 
-    const turtleInfo = await extractTurtleData(page)
-    data.push(turtleInfo)
+    const turtleInfo = await extractTurtleData(page) // extrai os dados da tartaruga
+    data.push(turtleInfo) // adiciona os dados ao array
 
-    await page.close()
+    await page.close() // fecha a página
   }
 
   return data
 }
 
 async function extractTurtleData(page) {
-  const name = await page.$eval('.family-name', (el) => el.textContent.trim())
-  const description = await page.$eval('.lead', (el) => el.textContent.trim())
-  const imageUrl = await page.$eval('.turtle-image', (el) =>
-    el.getAttribute('src')
+  const name = await page.$eval('.family-name', (el) => el.textContent.trim()) // extrai o nome da tartaruga da classe .family-name e remove espaços em branco
+  const description = await page.$eval('.lead', (el) => el.textContent.trim()) // extrai a descrição da tartaruga da classe .lead e remove espaços em branco
+  const imageUrl = await page.$eval('.turtle-image', (el) => 
+    el.getAttribute('src') // extrai o atributo src da imagem da tartaruga
   )
 
   return { species: name, description, imageUrl }
