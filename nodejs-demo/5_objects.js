@@ -10,8 +10,9 @@ const fifaCupWinners = {
   inglaterra: 1
 }
 
+// loop em cada chave do objeto fifaCupWinners (brasil, alemanha, itália, etc.)
 for (const country in fifaCupWinners) {
-  const wins = fifaCupWinners[country]
-  console.log(`${country} ganhou ${wins} copas`)
+  const wins = fifaCupWinners[country] // acessa o valor associado à chave country no objeto fifaCupWinners (fifaCupWinners['brasil'] = 5)
+  console.log(`${country} ganhou ${wins} copas`) // printf do javascript
 }
 
