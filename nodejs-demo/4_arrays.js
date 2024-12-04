@@ -6,3 +6,5 @@ for (let i = 0; i < array.length; ++i) {
 }
 console.log(`Sum of array = ${sum}`)
 
+const double = array.map((x) => x * 2)
+console.log(`Double of the array`,  double )
