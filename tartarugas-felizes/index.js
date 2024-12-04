@@ -5,6 +5,6 @@ import { writeFileSync } from 'fs'
 (async () => {
   const turtles = await main()
 
-  writeFileSync('./output.json', JSON.stringify(turtles))
+  writeFileSync("turtles-data.json", turtles)
   process.exit(0)
 })()
