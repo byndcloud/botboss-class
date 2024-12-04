@@ -7,17 +7,21 @@ async function main() {
 
     const countries = await page.$$eval('.country', (elements) => {
         return elements.map((el) => {
-        const name = el.querySelector('.country-name')?.textContent.trim();
-        const capital = el.querySelector('.country-capital')?.textContent.trim();
-        const population = el.querySelector('.country-population')?.textContent.trim();
-        const area = el.querySelector('.country-area')?.textContent.trim();
+            function parseTextContent(element) { 
+                return element?.textContent.trim();
+            }
 
-        return {
-            name,
-            capital,
-            population,
-            area,
-        };
+            const name = parseTextContent(el.querySelector('.country-name'))
+            const capital = parseTextContent(el.querySelector('.country-capital'))
+            const population = parseTextContent(el.querySelector('.country-population'))
+            const area = parseTextContent(el.querySelector('.country-area'))
+
+            return {
+                name,
+                capital,
+                population,
+                area,
+            };
         });
     });
 
