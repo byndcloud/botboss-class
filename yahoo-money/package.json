@@ -1,0 +1,16 @@
+{
+  "name": "countries-of-the-world",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "json-2-csv": "^5.5.7",
+    "puppeteer": "^20.8.2"
+  }
+}
