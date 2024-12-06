@@ -5,7 +5,7 @@ async function main() {
     const page = await setupPage(url)
     await closeCookiesDialog(page)
 
-    await searchForTerm(page, 'apartamento aluguel') // digita "apartamento" no campo de busca
+    await searchForTerm(page, 'apartamento') // digita "apartamento" no campo de busca
 
     // Extract data
     console.log('Extraindo dados dos anúncios')
@@ -15,7 +15,7 @@ async function main() {
     const adData = await processAdListings(ads)
     console.table(adData);
 
-    process.exit(0)
+    // process.exit(0)
 }
 
 main().then()
@@ -29,7 +29,7 @@ main().then()
 async function processAdListings(ads) {
     const data = []
     for (const ad of ads) {
-        console.log(`Anúncio ${ads.indexOf(ad) + 1}/${ads}`)
+        console.log(`Anúncio ${ads.indexOf(ad) + 1}/${ads.length}`)
         const title = await ad.$eval('h2.olx-ad-card__title', (el) => el.textContent?.trim())
         const price = await ad.$eval('.olx-ad-card__price', (el) => el.textContent?.trim())
         const location = await ad.$eval('.olx-ad-card__location p', (el) => el.textContent?.trim())
@@ -48,7 +48,7 @@ async function processAdListings(ads) {
  * @param {number} [maxAds=5] - O número máximo de anúncios a serem retornados.
  * @returns {Promise<Array>} Uma promessa que resolve para um array de elementos de anúncio.
  */
-async function fetchAdsFromPage(page, maxAds = 5) {
+async function fetchAdsFromPage(page, maxAds = 50) {
     await page.waitForSelector('#total-of-ads') // espera que os anúncios sejam carregados
     const ads = await page.$$('section.olx-ad-card')
     return ads.slice(0, maxAds)
